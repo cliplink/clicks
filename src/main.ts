@@ -16,7 +16,7 @@ async function bootstrap() {
   });
 
   await app.startAllMicroservices();
-  await app.listen(3000); // This is just for health checks or other HTTP endpoints if needed
-  console.log('Click Worker Microservice is running');
+  await app.listen(process.env.PORT ?? 3000); // for health checks (not used now)
+  console.log('Clicks microservice is running');
 }
 bootstrap();
