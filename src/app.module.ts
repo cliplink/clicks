@@ -1,9 +1,12 @@
+import { createPinoLoggerModule, createTypeOrmModule } from '@cliplink/utils';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { AppConfig } from './_common/types/app-config.type';
 import { ClicksModule } from './clicks/clicks.module';
-import config from './config';
 import { ClickEntity } from './clicks/dao/click.entity';
+import config from './config';
 
 @Module({
   imports: [
@@ -20,6 +23,8 @@ import { ClickEntity } from './clicks/dao/click.entity';
         migrations: [], // Migrations will be run separately
       }),
     }),
+    createTypeOrmModule<AppConfig>('databaseConnectionOptions'),
+    createPinoLoggerModule(),
     ClicksModule,
   ],
 })

@@ -25,7 +25,10 @@ export default (): AppConfig => ({
   },
 });
 
-function getEnv<T extends string | number | boolean>(envName: string, strict = true): T {
+function getEnv<T extends string | number | boolean>(
+  envName: string,
+  strict = true,
+): T {
   const raw = process.env[envName];
   if (raw === undefined) {
     if (strict) {
