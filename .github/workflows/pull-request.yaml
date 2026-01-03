@@ -15,5 +15,4 @@ on:
 jobs:
   linter-and-tests:
     uses: ./.github/workflows/tests.yaml
-    secrets:
-      CLIPLINK_PACKAGES_TOKEN: ${{ secrets.CLIPLINK_PACKAGES_TOKEN }}
+    secrets: inherit

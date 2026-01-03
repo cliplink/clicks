@@ -2,6 +2,9 @@ name: Tests
 
 on:
   workflow_call:
+    secrets:
+      CLIPLINK_PACKAGES_TOKEN:
+        required: true
 
 jobs:
   lint:
@@ -15,15 +18,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Create .npmrc for GitHub Packages
+        run: |
+          echo "@cliplink:registry=https://npm.pkg.github.com" > .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}" >> .npmrc
 
       - name: Install dependencies
-        run: |
-          mv .npmrc.githubactions .npmrc
-          npm ci
-        env:
-          CLIPLINK_PACKAGES_TOKEN: ${{secrets.CLIPLINK_PACKAGES_TOKEN}}
+        run: npm ci
 
       - name: Run lint
         run: npm run lint
