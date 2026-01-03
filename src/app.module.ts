@@ -7,6 +7,7 @@ import { AppConfig } from './_common/types/app-config.type';
 import { ClicksModule } from './clicks/clicks.module';
 import { ClickEntity } from './clicks/dao/click.entity';
 import config from './config';
+import { NatsModule } from './nats/nats.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import config from './config';
     }),
     createTypeOrmModule<AppConfig>('databaseConnectionOptions'),
     createPinoLoggerModule(),
+    NatsModule,
     ClicksModule,
   ],
 })

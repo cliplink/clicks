@@ -2,8 +2,8 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { ClickCreatedEvent } from '../_contracts';
 import { ClickEntity } from './dao/click.entity';
-import { ClickCreatedEvent } from '../_common/types/click-created-event.type';
 
 const FLUSH_INTERVAL_MS = 5000; // 5 seconds
 const BATCH_SIZE = 100;
@@ -28,13 +28,13 @@ export class ClicksService implements OnModuleInit, OnModuleDestroy {
   onModuleDestroy() {
     clearInterval(this.flushInterval);
     // Ensure any remaining clicks are flushed before shutdown
-    this.flushBuffer();
+    this.flushBuffer().then();
   }
 
   public addClick(clickEvent: ClickCreatedEvent) {
     this.clickBuffer.push(clickEvent);
     if (this.clickBuffer.length >= BATCH_SIZE) {
-      this.flushBuffer();
+      this.flushBuffer().then();
     }
   }
 

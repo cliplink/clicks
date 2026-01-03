@@ -1,5 +1,5 @@
 export interface ClickCreatedEvent {
-  linkId: string; // bigint from Postgres → string
+  linkId: string;
   occurredAt: string; // ISO timestamp
   ipHash?: string;
   userAgent?: string;

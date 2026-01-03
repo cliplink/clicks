@@ -1,23 +1,29 @@
-import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { randomUUID } from 'crypto';
 
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+
+import { getValidationPipeParams } from './_common/app/get-validation-pipe-params';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
+  const app = await NestFactory.create(AppModule, {
+    bodyParser: true,
+  });
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.disable('x-powered-by');
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.NATS,
-    options: {
-      servers: [configService.get<string>('nats.server') as string],
-      queue: 'clicks-queue',
-    },
+  app.enableCors();
+
+  app.useGlobalPipes(new ValidationPipe(getValidationPipeParams(true)));
+
+  app.use((req, res, next) => {
+    req.id = req.headers['x-request-id'] || randomUUID();
+    res.setHeader('x-request-id', req.id);
+    next();
   });
 
-  await app.startAllMicroservices();
-  await app.listen(process.env.PORT ?? 3000); // for health checks (not used now)
-  console.log('Clicks microservice is running');
+  await app.listen(process.env.PORT ?? 3001);
 }
+
 bootstrap();
