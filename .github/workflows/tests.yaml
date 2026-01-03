@@ -14,13 +14,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: https://npm.pkg.github.com
-          scope: '@cliplink'
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install dependencies
+        run: |
+          mv .npmrc.githubactions .npmrc
+          npm ci
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.CLIPLINK_PACKAGES_TOKEN }}
+          CLIPLINK_PACKAGES_TOKEN: ${{secrets.CLIPLINK_PACKAGES_TOKEN}}
 
       - name: Run lint
         run: npm run lint
