@@ -11,8 +11,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { ClicksService } from './clicks.service';
 import { AppConfig } from '../_common/types/app-config.type';
-import { NATS_CONNECTION_SERVICE } from '../nats/constants';
 import { ClickCreatedEvent } from '../_contracts';
+import { NATS_CONNECTION_SERVICE } from '../nats/constants';
 
 @Injectable()
 export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
