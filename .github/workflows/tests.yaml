@@ -2,23 +2,19 @@ name: Tests
 
 on:
   workflow_call:
+    secrets:
+      CLIPLINK_PACKAGES_TOKEN:
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Create .npmrc for GitHub Packages
-        run: |
-          echo "@cliplink:registry=https://npm.pkg.github.com" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}" >> .npmrc
 
       - name: Install dependencies
         run: npm ci
@@ -33,12 +29,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run tests in Docker
+      - name: Build test image with secrets
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          tags: click-worker:test
+          push: false
+          build-args: |
+            NODE_ENV=test
+          secrets: |
+            "npm_token=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}"
+
+      - name: Run tests in Docker Compose
         run: |
+          # Важно: --build НЕ нужен — образ уже собран
           docker compose \
             -f ./docker-compose/docker-compose.yml \
             -f ./docker-compose/docker-compose.test.yml \
-            up --build --exit-code-from click-worker
+            up --exit-code-from click-worker
 
       - name: Cleanup Docker
         if: always()
@@ -46,4 +55,4 @@ jobs:
           docker compose \
             -f ./docker-compose/docker-compose.yml \
             -f ./docker-compose/docker-compose.test.yml \
-            down -v
+            down -v --remove-orphans
