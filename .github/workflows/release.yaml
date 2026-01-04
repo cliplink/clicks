@@ -63,8 +63,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/click-worker:latest
-            ghcr.io/${{ github.repository_owner }}/click-worker:v${{ needs.bump-version.outputs.new_version }}
+            ghcr.io/${{ github.repository_owner }}/clicks-worker:latest
+            ghcr.io/${{ github.repository_owner }}/clicks-worker:v${{ needs.bump-version.outputs.new_version }}
           build-args: |
             CLIPLINK_PACKAGES_TOKEN=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}
             NODE_ENV=production
