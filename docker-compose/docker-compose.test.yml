@@ -11,6 +11,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      APP_NAME: click-worker
       DB_HOST: postgres
       DB_PORT: 5432
       DB_LOGIN: user
