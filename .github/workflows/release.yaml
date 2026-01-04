@@ -1,0 +1,70 @@
+name: Docker Build and Release
+
+permissions:
+  contents: write
+  packages: write
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/tests.yaml
+    secrets: inherit
+
+  build-contracts:
+    needs: run-tests
+    uses: ./.github/workflows/contracts-build.yaml
+
+  bump-version:
+    needs: [run-tests, build-contracts]
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.bump.outputs.new_version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bump backend version
+        id: bump
+        run: |
+          .github/scripts/bump-version.sh ./package.json ""
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+  build-and-push:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/click-worker:latest
+            ghcr.io/${{ github.repository_owner }}/click-worker:v${{ needs.bump-version.outputs.new_version }}
+          build-args: |
+            CLIPLINK_PACKAGES_TOKEN=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}
+            NODE_ENV=production

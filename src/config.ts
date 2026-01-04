@@ -19,13 +19,17 @@ const databaseConnectionOptions: DataSourceOptions = {
 };
 
 export default (): AppConfig => ({
+  appName: getEnv<string>('APP_NAME', true),
   databaseConnectionOptions,
   nats: {
     server: getEnv<string>('NATS_SERVER'),
   },
 });
 
-function getEnv<T extends string | number | boolean>(envName: string, strict = true): T {
+function getEnv<T extends string | number | boolean>(
+  envName: string,
+  strict = true,
+): T {
   const raw = process.env[envName];
   if (raw === undefined) {
     if (strict) {

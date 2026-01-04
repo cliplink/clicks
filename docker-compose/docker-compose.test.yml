@@ -1,0 +1,21 @@
+services:
+  click-worker:
+    build:
+      context: ../
+      args:
+        NODE_ENV: development
+        CLIPLINK_PACKAGES_TOKEN: ${CLIPLINK_PACKAGES_TOKEN}
+    command: npm run ci:test
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_NAME: click-worker
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_LOGIN: user
+      DB_PASSWORD: password
+      DB_NAME: cliplink
+      DB_ENABLE_LOGGING: false
+      NATS_SERVER: nats://nats:4222

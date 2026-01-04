@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ClickEntity } from './dao/click.entity';
-import { ClicksController } from './clicks.controller';
+import { ClicksConsumerService } from './clicks-consumer.service';
 import { ClicksService } from './clicks.service';
+import { ClickEntity } from './dao/click.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ClickEntity])],
-  controllers: [ClicksController],
-  providers: [ClicksService],
+  providers: [ClicksService, ClicksConsumerService],
 })
 export class ClicksModule {}
