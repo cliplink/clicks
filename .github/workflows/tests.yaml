@@ -9,15 +9,20 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: '@cliplink'
 
       - name: Install dependencies
         run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.CLIPLINK_PACKAGES_TOKEN }}
 
       - name: Run lint
         run: npm run lint
@@ -49,7 +54,7 @@ jobs:
           docker compose \
             -f ./docker-compose/docker-compose.yml \
             -f ./docker-compose/docker-compose.test.yml \
-            up --no-build --exit-code-from click-worker   # --no-build !!
+            up --no-build --exit-code-from click-worker
 
       - name: Cleanup Docker
         if: always()

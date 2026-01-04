@@ -17,7 +17,7 @@ RUN --mount=type=secret,id=clip_token \
     else \
       npm install; \
     fi && \
-    rm -f .npmrc                  # чистим, чтобы не осталось в слое
+    rm -f .npmrc
 
 COPY . .
 
