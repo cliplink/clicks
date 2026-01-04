@@ -11,10 +11,12 @@ ENV CLIPLINK_PACKAGES_TOKEN=${CLIPLINK_PACKAGES_TOKEN}
 COPY .npmrc ./
 COPY package*.json ./
 
-RUN if [ "$NODE_ENV" = "production" ]; then npm ci --omit=dev; else npm install; fi
+RUN npm ci --include=dev
 
 COPY . .
 
-RUN if [ "$NODE_ENV" = "production" ]; then npm run build; fi
+RUN npm run build
+
+RUN if [ "$NODE_ENV" = "production" ]; then npm prune --production; fi
 
 CMD ["sh", "-c", "if [ \"$NODE_ENV\" = \"production\" ]; then node dist/main.js; else npm run start:dev; fi"]
