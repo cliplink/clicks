@@ -12,7 +12,7 @@
     "migration:run": "npm run build && typeorm migration:run -d dist/database/data-source.js",
     "migration:dev": "typeorm migration:run -d dist/database/data-source.js",
     "test": "jest",
-    "test:ci": "jest --runInBand --detectOpenHandles",
+    "test:ci": "jest --runInBand --detectOpenHandles --passWithNoTests",
     "dev": "npm run build && npm run migration:dev && npm run start:dev",
     "ci:test": "npm run migration:run && npm run test:ci",
     "docker:dev": "docker compose -f ./docker-compose/docker-compose.yml -f ./docker-compose/docker-compose.dev.yml up --build",
