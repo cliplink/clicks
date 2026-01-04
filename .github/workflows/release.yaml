@@ -12,6 +12,7 @@ on:
 jobs:
   run-tests:
     uses: ./.github/workflows/tests.yaml
+    secrets: inherit
 
   build-contracts:
     needs: run-tests
@@ -64,3 +65,6 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/click-worker:latest
             ghcr.io/${{ github.repository_owner }}/click-worker:v${{ needs.bump-version.outputs.new_version }}
+          build-args: |
+            CLIPLINK_PACKAGES_TOKEN=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}
+            NODE_ENV=production
