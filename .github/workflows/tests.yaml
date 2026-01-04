@@ -29,6 +29,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build test image with secrets
         uses: docker/build-push-action@v6
         with:
@@ -39,15 +42,14 @@ jobs:
           build-args: |
             NODE_ENV=test
           secrets: |
-            "npm_token=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}"
+            clip_token=${{ secrets.CLIPLINK_PACKAGES_TOKEN }}
 
       - name: Run tests in Docker Compose
         run: |
-          # Важно: --build НЕ нужен — образ уже собран
           docker compose \
             -f ./docker-compose/docker-compose.yml \
             -f ./docker-compose/docker-compose.test.yml \
-            up --exit-code-from click-worker
+            up --no-build --exit-code-from click-worker   # --no-build !!
 
       - name: Cleanup Docker
         if: always()

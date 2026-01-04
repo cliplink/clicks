@@ -9,15 +9,15 @@ ENV NODE_ENV=${NODE_ENV}
 
 COPY package*.json ./
 
-RUN --mount=type=secret,id=npm_token \
+RUN --mount=type=secret,id=clip_token \
     echo "@cliplink:registry=https://npm.pkg.github.com" > .npmrc && \
-    echo "//npm.pkg.github.com/:_authToken=$(cat /run/secrets/npm_token)" >> .npmrc && \
+    echo "//npm.pkg.github.com/:_authToken=$(cat /run/secrets/clip_token)" >> .npmrc && \
     if [ "$NODE_ENV" = "production" ]; then \
       npm ci --omit=dev; \
     else \
       npm install; \
     fi && \
-    rm -f .npmrc
+    rm -f .npmrc                  # чистим, чтобы не осталось в слое
 
 COPY . .
 
