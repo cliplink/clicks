@@ -54,7 +54,6 @@ export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
 
       try {
         const data = msg.json() as ClickCreatedEvent;
-        console.log('click event:', data);
 
         this.clicksService.addClick(data);
 

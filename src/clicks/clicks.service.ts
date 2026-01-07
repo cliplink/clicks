@@ -1,17 +1,25 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ClickCreatedEvent } from '../_contracts';
 import { ClickEntity } from './dao/click.entity';
 
-const FLUSH_INTERVAL_MS = 5000; // 5 seconds
+// TODO: move to env config
+const FLUSH_INTERVAL_MS = 5000;
 const BATCH_SIZE = 100;
 
 @Injectable()
 export class ClicksService implements OnModuleInit, OnModuleDestroy {
   private clickBuffer: ClickCreatedEvent[] = [];
   private flushInterval: NodeJS.Timeout;
+
+  private logger = new Logger(ClicksService.name);
 
   constructor(
     @InjectRepository(ClickEntity)
@@ -27,7 +35,6 @@ export class ClicksService implements OnModuleInit, OnModuleDestroy {
 
   onModuleDestroy() {
     clearInterval(this.flushInterval);
-    // Ensure any remaining clicks are flushed before shutdown
     this.flushBuffer().then();
   }
 
@@ -60,12 +67,12 @@ export class ClicksService implements OnModuleInit, OnModuleDestroy {
 
     try {
       await this.clicksRepository.save(clickEntities);
-      console.log(
+      this.logger.log(
         `Successfully saved ${clickEntities.length} clicks to the database.`,
       );
     } catch (error) {
-      console.error('Failed to save clicks to the database:', error);
-      // Optionally, re-add failed clicks to the buffer or a dead-letter queue
+      this.logger.error('Failed to save clicks to the database:', error);
+      // re-add failed clicks to the buffer
       this.clickBuffer.push(...clicksToSave);
     }
   }
