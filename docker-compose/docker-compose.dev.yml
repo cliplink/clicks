@@ -54,8 +54,4 @@ services:
       NATS_STREAM_NAME: CLICKS
       NATS_SUBJECTS: "click.*"
       NATS_SERVER: "nats:4222"
-    healthcheck:
-      test: [ "CMD", "test", "-f", "/tmp/stream_ready" ]
-      interval: 3s
-      timeout: 2s
-      retries: 20
+    command: sh -c "nats context save local --server=nats:4222 --select && tail -f /dev/null"
