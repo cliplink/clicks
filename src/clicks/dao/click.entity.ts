@@ -1,10 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('clicks')
 @Index('IDX_CLICKS_LINK_ID', ['linkId'])
@@ -15,11 +9,7 @@ export class ClickEntity {
   @Column({ type: 'bigint', name: 'link_id' })
   public linkId: string;
 
-  @CreateDateColumn({
-    type: 'timestamptz',
-    default: 'now()',
-    name: 'occurred_at',
-  })
+  @Column({ type: 'timestamptz', name: 'occurred_at' })
   public occurredAt: Date;
 
   @Column({ type: 'varchar', name: 'ip_hash', nullable: true })
@@ -28,7 +18,7 @@ export class ClickEntity {
   @Column({ type: 'varchar', name: 'user_agent', nullable: true })
   public userAgent: string | null;
 
-  @Column({ type: 'varchar', name: 'referrer', nullable: true })
+  @Column({ type: 'varchar', name: 'referer', nullable: true })
   public referer: string | null;
 
   @Column({ type: 'varchar', name: 'country', nullable: true })
