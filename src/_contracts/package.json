@@ -1,6 +1,6 @@
 {
   "name": "@cliplink/click-worker-contracts",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Shared contracts and types for Cliplink click worker",
   "private": false,
   "main": "dist/index.js",
