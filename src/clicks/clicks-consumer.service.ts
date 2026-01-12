@@ -26,7 +26,7 @@ export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   async onModuleInit() {
-    const stream = process.env.NATS_STREAM_NAME as string;
+    const stream = this.configService.getOrThrow<string>('nats.streamName');
     const durable = `${this.configService.getOrThrow<AppConfig>('appName')}_${ClicksConsumerService.name}`;
 
     const jsm = await jetstreamManager(this.nc);

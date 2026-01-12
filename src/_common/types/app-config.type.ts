@@ -5,5 +5,6 @@ export type AppConfig = {
   databaseConnectionOptions: DataSourceOptions;
   nats: {
     server: string;
+    streamName: string;
   };
 };
