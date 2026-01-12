@@ -1,5 +1,11 @@
 import { NATS_CONNECTION_SERVICE } from '@cliplink/utils';
-import { AckPolicy, jetstream, jetstreamManager } from '@nats-io/jetstream';
+import {
+  AckPolicy,
+  ConsumerInfo,
+  jetstream,
+  jetstreamManager,
+  type JetStreamManager,
+} from '@nats-io/jetstream';
 import type { NatsConnection } from '@nats-io/nats-core';
 import { Logger } from '@nestjs/common';
 import {
@@ -31,16 +37,9 @@ export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
 
     const jsm = await jetstreamManager(this.nc);
 
-    await jsm.consumers
-      .add(stream, {
-        durable_name: durable,
-        ack_policy: AckPolicy.Explicit,
-        filter_subject: CLICK_CREATED_SUBJECT,
-        deliver_policy: 'all',
-      })
-      .catch(() => {
-        this.logger.log('JetStream Clicks consumer already exists');
-      });
+    await this.createStream(jsm, stream);
+
+    await this.createConsumer(jsm, stream, durable);
 
     const jetStreamClient = jetstream(this.nc);
 
@@ -60,7 +59,43 @@ export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
         msg.ack();
       } catch (err) {
         this.logger.error('error processing message', err);
+        msg.term();
       }
+    }
+  }
+
+  private async createStream(jsm: JetStreamManager, stream: string) {
+    try {
+      await jsm.streams.add({
+        name: stream,
+        subjects: [CLICK_CREATED_SUBJECT],
+      });
+
+      this.logger.debug(`Stream created: ${stream}`);
+    } catch (err: unknown) {
+      const e = err as { message: string };
+      this.logger.warn(`Stream creation/update warning: ${e.message}`);
+    }
+  }
+
+  private async createConsumer(
+    jsm: JetStreamManager,
+    stream: string,
+    durable: string,
+  ): Promise<ConsumerInfo | undefined> {
+    try {
+      const consumerInfo = jsm.consumers.add(stream, {
+        durable_name: durable,
+        ack_policy: AckPolicy.Explicit,
+        filter_subject: CLICK_CREATED_SUBJECT,
+        deliver_policy: 'all',
+      });
+
+      this.logger.debug(`Consumer for ${stream} created, durable: ${durable}`);
+
+      return consumerInfo;
+    } catch {
+      this.logger.log('JetStream Clicks consumer already exists');
     }
   }
 
