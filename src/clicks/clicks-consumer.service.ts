@@ -1,3 +1,4 @@
+import { NATS_CONNECTION_SERVICE } from '@cliplink/utils';
 import { AckPolicy, jetstream, jetstreamManager } from '@nats-io/jetstream';
 import type { NatsConnection } from '@nats-io/nats-core';
 import { Logger } from '@nestjs/common';
@@ -12,7 +13,6 @@ import { ConfigService } from '@nestjs/config';
 import { ClicksService } from './clicks.service';
 import { AppConfig } from '../_common/types/app-config.type';
 import { ClickCreatedEvent } from '../_contracts';
-import { NATS_CONNECTION_SERVICE } from '../nats/constants';
 
 @Injectable()
 export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
