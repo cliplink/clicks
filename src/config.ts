@@ -22,7 +22,8 @@ export default (): AppConfig => ({
   appName: getEnv<string>('APP_NAME', true),
   databaseConnectionOptions,
   nats: {
-    server: getEnv<string>('NATS_SERVER'),
+    server: getEnv<string>('NATS_SERVER', true),
+    streamName: getEnv<string>('NATS_STREAM_NAME', true),
   },
 });
 

@@ -19,3 +19,4 @@ services:
       DB_NAME: cliplink
       DB_ENABLE_LOGGING: false
       NATS_SERVER: nats://nats:4222
+      NATS_STREAM_NAME: CLICKS

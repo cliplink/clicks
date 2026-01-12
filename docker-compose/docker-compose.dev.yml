@@ -50,8 +50,4 @@ services:
     depends_on:
       nats:
         condition: service_healthy
-    environment:
-      NATS_STREAM_NAME: CLICKS
-      NATS_SUBJECTS: "click.*"
-      NATS_SERVER: "nats:4222"
     command: sh -c "nats context save local --server=nats:4222 --select && tail -f /dev/null"
