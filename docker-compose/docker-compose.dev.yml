@@ -20,8 +20,6 @@ services:
       - ../:/app
     ports:
       - "3000:3000"
-    environment:
-      NATS_SERVER: nats://nats:4222
     depends_on:
       postgres:
         condition: service_healthy
