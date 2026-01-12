@@ -1,4 +1,5 @@
 import { createPinoLoggerModule, createTypeOrmModule } from '@cliplink/utils';
+import { NatsModule } from '@cliplink/utils';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,7 +8,6 @@ import { AppConfig } from './_common/types/app-config.type';
 import { ClicksModule } from './clicks/clicks.module';
 import { ClickEntity } from './clicks/dao/click.entity';
 import config from './config';
-import { NatsModule } from './nats/nats.module';
 
 @Module({
   imports: [
