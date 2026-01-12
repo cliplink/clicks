@@ -12,7 +12,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { ClicksService } from './clicks.service';
 import { AppConfig } from '../_common/types/app-config.type';
-import { ClickCreatedEvent } from '../_contracts';
+import { CLICK_CREATED_SUBJECT, ClickCreatedEvent } from '../_contracts';
 
 @Injectable()
 export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
@@ -35,7 +35,7 @@ export class ClicksConsumerService implements OnModuleInit, OnModuleDestroy {
       .add(stream, {
         durable_name: durable,
         ack_policy: AckPolicy.Explicit,
-        filter_subject: 'click.*',
+        filter_subject: CLICK_CREATED_SUBJECT,
         deliver_policy: 'all',
       })
       .catch(() => {
