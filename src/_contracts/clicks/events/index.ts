@@ -1,2 +1,2 @@
-export * from './click-created-event.type';
-export * from './click-created-subject';
+export * from './click-created-event.type.js';
+export * from './click-created-subject.js';
